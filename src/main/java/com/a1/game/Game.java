@@ -2,6 +2,7 @@ package com.a1.game;
 
 import com.a1.util.Card;
 import com.a1.util.Const;
+import com.a1.util.DiceUtil;
 
 import java.util.List;
 
@@ -92,5 +93,77 @@ public class Game {
             }
         }
         return true;
+    }
+
+    /**
+     * if a player accumulate less than 3 skulls, check if re-rolled is allowed before s/he choose to
+     * 1. if s/he has a treasure chest card, check if at least two none-skull dice are outside the chest
+     */
+    public static boolean isReRollAllowed(String[] dieRoll, Card card) {
+        boolean allowed;
+        if (card.getName().equals(Const.CARD_TREASURE_CHEST) && card.getTreasureChest().size() > 0) {
+            List<Integer> chest = card.getTreasureChest();
+            int notSkullNumber = 0;
+            for (int i = 0; i < dieRoll.length; i++) {
+                if (!dieRoll[i].equals(Const.DICE_SKULL) && !chest.contains(i))
+                    notSkullNumber++;
+            }
+            if (notSkullNumber >= 2) allowed = true;
+            else allowed = false;
+        } else { // don't have treasure card
+            allowed = true;
+        }
+        if (!allowed) System.out.println("Sorry, you are not allowed to re-roll...");
+        return allowed;
+    }
+
+    /**
+     * convert "0","1","2","3"... to 0,1,2,3...
+     */
+    public static int[] convertStringArrayToInt(String[] strings) {
+        int[] ints = new int[strings.length];
+        for (int i = 0; i < strings.length; ++i) {
+            ints[i] = Integer.parseInt(strings[i]);
+        }
+        return ints;
+    }
+
+    /**
+     * re-roll selected dice and return a new dieRoll
+     */
+    public static void reRollDice(String[] dieRoll, int[] reRollIndexes) {
+        for (int index : reRollIndexes) {
+            reRollAt(dieRoll, index);
+        }
+    }
+
+    /**
+     *  [Only For JUnit Test] re-roll selected dice and return a new dieRoll
+     */
+    public static void riggedReRollDice(String[] dieRoll, int[] reRollIndexes, String[] targets) {
+        for (int i = 0; i < reRollIndexes.length; i++) {
+            riggedReRollAt(dieRoll, reRollIndexes[i], targets[i]);
+        }
+    }
+
+    /**
+     * re-roll index-th dice in the dieRoll
+     */
+    public static void reRollAt(String[] dieRoll, int index) {
+        int rand = (int) (Math.random() * DiceUtil.diceTypeNumber + 1); // [1, 6]
+        dieRoll[index] = DiceUtil.diceMap.get(rand);
+    }
+
+    /**
+     * [Only For JUnit Test] re-roll index-th dice in the dieRoll
+     */
+    public static void riggedReRollAt(String[] dieRoll, int index, String target) {
+        String actual = "";
+        int rand = 0;
+        while (!actual.equals(target)) {
+            rand = (int) (Math.random() * DiceUtil.diceTypeNumber + 1); // [1, 6]
+            actual = DiceUtil.diceMap.get(rand);
+        }
+        dieRoll[index] = DiceUtil.diceMap.get(rand);
     }
 }

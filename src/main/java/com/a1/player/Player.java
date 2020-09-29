@@ -1,6 +1,7 @@
 package com.a1.player;
 
 import com.a1.game.Game;
+import com.a1.game.GameMode;
 import com.a1.util.Card;
 import com.a1.util.Const;
 import com.a1.util.SeaBattleUtil;
@@ -72,6 +73,43 @@ public class Player implements Serializable {
                             System.out.println("Sorry, you die. You earned 0 points in your turn.");
                             return 0;
                         }
+                    }
+                }
+            } else {  // player is alive
+
+                // before a player choose to re-roll, check if re-rolled is allow
+                boolean reRollAllowed = Game.isReRollAllowed(dieRoll, card);
+                System.out.println("\nSelect an action: ");
+                System.out.println("(1) Roll to Score");
+                if (reRollAllowed) {
+                    System.out.println("(2) Choose dice index to re-roll");
+                }
+
+                int act = sc.nextInt();
+                if (act == 1) {
+
+                } else if (act == 2 && reRollAllowed) {  // re-roll
+                    boolean valid = false;
+                    int[] reRollIndexes = {};
+                    while (!valid) {
+                        System.out.println("Select the die to re-roll(0,1,2...) ");
+                        String[] strs = (sc.next()).replaceAll("\\s", "").split(",");
+                        reRollIndexes = Game.convertStringArrayToInt(strs);
+                        valid = Game.isReRollIndexValid(dieRoll, reRollIndexes, card);
+                        if (!valid) {
+                            System.out.println("Sorry, the selected die are not valid...");
+                        }
+                    }
+
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {  // only for JUnit test
+                        String targetStr = sc.nextLine();
+                        String[] targets = targetStr.trim().split(",");
+                        Game.riggedReRollDice(dieRoll, reRollIndexes, targets);
+                        System.out.println("****** After Re-Roll ******");
+                        Game.printDieRoll(dieRoll);
+                        System.out.println("***************************");
+                    } else if (GameMode.mode.equals(GameMode.REAL_GAME)) {
+                        Game.reRollDice(dieRoll, reRollIndexes);
                     }
                 }
             }
