@@ -184,7 +184,10 @@ public class Game {
         int scoreOfSequence = getScoreOfSequence(dieRoll, card, set);
         System.out.println("scoreOfSequence: " + scoreOfSequence);
 
-        int sum = faceValueOfDieRoll + faceValueOfCard + scoreOfSequence;
+        int fullChestBonus = getFullChestBonus(set);
+        System.out.println("fullChestBonus:" + fullChestBonus);
+
+        int sum = faceValueOfDieRoll + faceValueOfCard + scoreOfSequence + fullChestBonus;
         if (card.getName().equals(Const.CARD_CAPTAIN)) {
             sum *= 2;
         }
@@ -287,5 +290,28 @@ public class Game {
             }
         }
         return score;
+    }
+
+    public static int getFullChestBonus(Set<Integer> set) {
+        if (isFullChest(set))
+            return 500;
+        else
+            return 0;
+    }
+
+    /**
+     * if all dice generate score, the index of them will be in the set
+     * so if the size=8, the full chest satisfied
+     */
+    public static boolean isFullChest(Set<Integer> set) {
+        return set.size() == 8;
+    }
+
+    public static int calScore(int oldScore, int earnedScore) {
+        oldScore += earnedScore;
+        if (oldScore < 0)
+            return 0;
+        else
+            return oldScore;
     }
 }
