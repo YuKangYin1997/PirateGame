@@ -2,12 +2,10 @@ package com.a1.player;
 
 import com.a1.game.Game;
 import com.a1.game.GameMode;
-import com.a1.util.Card;
-import com.a1.util.Const;
-import com.a1.util.SeaBattleUtil;
-import com.a1.util.SorceressUtil;
+import com.a1.util.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Player implements Serializable {
@@ -62,11 +60,31 @@ public class Player implements Serializable {
             int skullNum = Game.getSkullNum(dieRoll, card);
             if (dead) {  // player is dead
                 if (skullNum >= 4) {
+                    if (roundNo == 1) {
 
+                    } else {
+                        if (card.getName().equals(Const.CARD_TREASURE_CHEST)) {
+                            if (card.getTreasureChest().size() == 0) {
+                                System.out.println("Sorry, you die, and your treasure chest is empty. You get 0 point in your turn.");
+                                return 0;
+                            } else {
+                                int score = TreasureChestUtil.rollToScore(dieRoll, card, new HashSet<Integer>());  // none-negative score
+                                System.out.println("Sorry, you die. You get " + score + " points from your treasure chest in this turn.");
+                                return score;
+                            }
+                        }
+                    }
                 } else if (skullNum == 3) {
                     if (!card.getName().equals(Const.CARD_SORCERESS)) {
                         if (card.getName().equals(Const.CARD_TREASURE_CHEST)) {
-
+                            if (card.getTreasureChest().size() == 0) {
+                                System.out.println("Sorry, you die, and your treasure chest is empty. You get 0 point in your turn.");
+                                return 0;
+                            } else {
+                                int score = TreasureChestUtil.rollToScore(dieRoll, card, new HashSet<Integer>());  // none-negative score
+                                System.out.println("Sorry, you die. You get " + score + " points from your treasure chest in this turn.");
+                                return score;
+                            }
                         } else if (SeaBattleUtil.hasSeaBattleCard(card)) {
 
                         } else {
@@ -96,6 +114,15 @@ public class Player implements Serializable {
                             SorceressUtil.usingSorceressCard(dieRoll, card, sc);
                             continue; // jump to next round
                         }
+                    }
+                } else if (card.getName().equals(Const.CARD_TREASURE_CHEST)) {
+                    System.out.println("Do you want to use your Treasure Chest?");
+                    System.out.println("\nSelect an action: ");
+                    System.out.println("(1) yes");
+                    System.out.println("(2) no");
+                    int act = sc.nextInt();
+                    if (act == 1) {
+                        TreasureChestUtil.usingTreasureChest(dieRoll, card, sc);
                     }
                 }
                 // before a player choose to re-roll, check if re-rolled is allow
