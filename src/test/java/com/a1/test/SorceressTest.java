@@ -5,6 +5,7 @@ import com.a1.game.GameMode;
 import com.a1.player.Player;
 import com.a1.util.Card;
 import com.a1.util.Const;
+import com.a1.util.SorceressUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

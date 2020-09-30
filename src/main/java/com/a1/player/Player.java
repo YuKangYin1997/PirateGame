@@ -5,6 +5,7 @@ import com.a1.game.GameMode;
 import com.a1.util.Card;
 import com.a1.util.Const;
 import com.a1.util.SeaBattleUtil;
+import com.a1.util.SorceressUtil;
 
 import java.io.Serializable;
 import java.util.Scanner;
@@ -73,9 +74,30 @@ public class Player implements Serializable {
                             return 0;
                         }
                     }
+                    if (card.getName().equals(Const.CARD_SORCERESS) && card.isUsed()) {
+                        System.out.println("Sorry, you die. You earned 0 points in your turn.");
+                        return 0;
+                    }
                 }
             } else {  // player is alive
-
+                if (card.getName().equals(Const.CARD_SORCERESS) && !card.isUsed()) {
+                    if (skullNum == 3) {
+                        System.out.println("\nSorry, you accumulate 3 skulls, but you can use your Sorceress Card to re-roll one of them.");
+                        SorceressUtil.usingSorceressCard(dieRoll, card, sc);  // containing re-roll
+                        continue; // jump to next round
+                    } else if (skullNum == 2 || skullNum == 1) {
+                        System.out.println("Do you want to use your Sorceress Card in this turn?");
+                        System.out.println("\nSelect an action: ");
+                        System.out.println("(1) yes");
+                        System.out.println("(2) no");
+                        int act = sc.nextInt();
+                        if (act == 1) {
+                            System.out.println("***");
+                            SorceressUtil.usingSorceressCard(dieRoll, card, sc);
+                            continue; // jump to next round
+                        }
+                    }
+                }
                 // before a player choose to re-roll, check if re-rolled is allow
                 boolean reRollAllowed = Game.isReRollAllowed(dieRoll, card);
                 System.out.println("\nSelect an action: ");
