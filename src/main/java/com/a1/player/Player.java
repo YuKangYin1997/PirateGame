@@ -7,7 +7,6 @@ import com.a1.util.Const;
 import com.a1.util.SeaBattleUtil;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Scanner;
 
 public class Player implements Serializable {
@@ -86,8 +85,10 @@ public class Player implements Serializable {
                 }
 
                 int act = sc.nextInt();
-                if (act == 1) {
-
+                if (act == 1) {  // roll to score
+                    int score = Game.rollToScore(dieRoll, card);
+                    System.out.println("Finish your turn, you earned " + score + " points.");
+                    return score;
                 } else if (act == 2 && reRollAllowed) {  // re-roll
                     boolean valid = false;
                     int[] reRollIndexes = {};

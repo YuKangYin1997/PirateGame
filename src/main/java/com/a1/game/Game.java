@@ -4,7 +4,7 @@ import com.a1.util.Card;
 import com.a1.util.Const;
 import com.a1.util.DiceUtil;
 
-import java.util.List;
+import java.util.*;
 
 public class Game {
 
@@ -165,5 +165,120 @@ public class Game {
             actual = DiceUtil.diceMap.get(rand);
         }
         dieRoll[index] = DiceUtil.diceMap.get(rand);
+    }
+
+    /**
+     * calculate the score a player earned in round
+     * 1. his player is still alive at this time
+     * 2. if player is dead, s/he can still get points with treasure chest, which is coded in TreasureChestUtil.java
+     * @return the score a player earned in a round
+     */
+    public static int rollToScore(String[] dieRoll, Card card) {
+        Set<Integer> set = new HashSet<Integer>();
+        int faceValueOfDieRoll = getFaceValueOfDieRoll(dieRoll, set);
+        System.out.println("faceValueOfDieRoll: " + faceValueOfDieRoll);
+
+        int faceValueOfCard = getFaceValueOfCard(card);
+        System.out.println("faceValueOfCard: " + faceValueOfCard);
+
+        int scoreOfSequence = getScoreOfSequence(dieRoll, card, set);
+        System.out.println("scoreOfSequence: " + scoreOfSequence);
+
+        int sum = faceValueOfDieRoll + faceValueOfCard + scoreOfSequence;
+        if (card.getName().equals(Const.CARD_CAPTAIN)) {
+            sum *= 2;
+        }
+        return sum;
+    }
+
+    /**
+     * get face value of a player's dieRoll
+     * @param set store dice which has contribution to a player's score
+     */
+    public static int getFaceValueOfDieRoll(String[] dieRoll, Set<Integer> set) {
+        int faceValue = 0;
+        for (int i = 0; i < dieRoll.length; i++) {
+            if (dieRoll[i].equals(Const.DICE_COIN) || dieRoll[i].equals(Const.DICE_DIAMOND)) {
+                faceValue += 100;
+                set.add(i);  // store this dice
+            }
+        }
+        return faceValue;
+    }
+
+    /**
+     * get face value of a player's card
+     */
+    public static int getFaceValueOfCard(Card card) {
+        if (card.getName().equals(Const.CARD_COIN) || card.getName().equals(Const.CARD_DIAMOND))
+            return 100;
+        else
+            return 0;
+    }
+
+    /**
+     * get sequence value generated from a player's dieRoll and card
+     * @param set store dice which has contribution to a player's score
+     */
+    public static int getScoreOfSequence(String[] dieRoll, Card card, Set<Integer> set) {
+        int score = 0;
+
+        // calculate how many time a dice appeared
+        // e.g. {"coin":2, "sword":2, "parrot":4, "skull":1}
+        Map<String, Integer> dict = new HashMap<String, Integer>();
+        for (String die : dieRoll) {
+            if (dict.containsKey(die)) {
+                dict.put(die, dict.get(die) + 1);
+            } else {
+                dict.put(die, 1);
+            }
+        }
+        // if a player has coin or diamond card, it can also be used to form a sequence
+        if (card.getName().equals(Const.CARD_COIN)) {
+            if (dict.containsKey(Const.DICE_COIN)) {
+                dict.put(Const.DICE_COIN, dict.get(Const.DICE_COIN) + 1);
+            } else {
+                dict.put(Const.DICE_COIN, 1);
+            }
+        }
+        if (card.getName().equals(Const.CARD_DIAMOND)) {
+            if (dict.containsKey(Const.DICE_DIAMOND)) {
+                dict.put(Const.DICE_DIAMOND, dict.get(Const.DICE_DIAMOND) + 1);
+            } else {
+                dict.put(Const.DICE_DIAMOND, 1);
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : dict.entrySet()) {
+            Integer appearedNum = entry.getValue();
+            String dieName = entry.getKey();
+
+            // backtrack which die make this sequence
+            if (appearedNum >= 3) {
+                for (int i = 0; i < dieRoll.length; i++) {
+                    if (dieRoll[i].equals(dieName)) {
+                        set.add(i);
+                    }
+                }
+            }
+
+            // get score generated from sequence
+            if (appearedNum == 3) {
+                score += 100;
+            } else if (appearedNum == 4) {
+                score += 200;
+            } else if (appearedNum == 5) {
+                score += 500;
+            } else if (appearedNum == 6) {
+                score += 1000;
+            } else if (appearedNum == 7) {
+                score += 2000;
+            } else if (appearedNum == 8 || appearedNum == 9) {
+                score += 4000;
+            } else { // appear 1,2 times
+                score += 0;
+            }
+        }
+        return score;
     }
 }
