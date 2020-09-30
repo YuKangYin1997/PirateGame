@@ -230,6 +230,58 @@ public class Part1Test {
     }
 
     @Test
+    public void scoreTest65() {
+        // score set of 8 coins on first roll (SC 5400)  seq of 8 + 9 coins +  full chest (if you have it)
+        GameMode.mode = GameMode.JUNIT_TEST;
+        String[] dieRoll = {Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN,
+                Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN};
+        Card card = new Card(Const.CARD_COIN);
+        InputStream in = new ByteArrayInputStream("1".getBytes());
+        Player player = new Player(" ");
+        int score = player.playTurn(dieRoll, card, new Scanner(in));
+        Assert.assertEquals(5400, score);
+    }
+
+    @Test
+    public void scoreTest66() {
+        // score set of 8 coins on first roll and FC is diamond (SC 5400)
+        GameMode.mode = GameMode.JUNIT_TEST;
+        String[] dieRoll = {Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN,
+                Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN};
+        Card card = new Card(Const.CARD_DIAMOND);
+        InputStream in = new ByteArrayInputStream("1".getBytes());
+        Player player = new Player(" ");
+        int score = player.playTurn(dieRoll, card, new Scanner(in));
+        Assert.assertEquals(5400, score);
+    }
+
+    @Test
+    public void scoreTest67() {
+        // score set of 8 swords on first roll and FC is captain (SC 4500x2 = 9000) if you have full chest
+        GameMode.mode = GameMode.JUNIT_TEST;
+        String[] dieRoll = {Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_SWORD,
+                Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_SWORD};
+        Card card = new Card(Const.CARD_CAPTAIN);
+        InputStream in = new ByteArrayInputStream("1".getBytes());
+        Player player = new Player(" ");
+        int score = player.playTurn(dieRoll, card, new Scanner(in));
+        Assert.assertEquals(9000, score);
+    }
+
+    @Test
+    public void scoreTest68() {
+        // score set of 8 monkeys over several rolls (SC 4600 because of FC is coin and full chest)
+        GameMode.mode = GameMode.JUNIT_TEST;
+        String[] dieRoll = {Const.DICE_COIN, Const.DICE_COIN, Const.DICE_DIAMOND, Const.DICE_DIAMOND,
+                Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_SWORD, Const.DICE_SWORD};
+        Card card = new Card(Const.CARD_COIN);
+        InputStream in = new ByteArrayInputStream("2 0,1,2,3 DICE_MONKEY,DICE_MONKEY,DICE_MONKEY,DICE_MONKEY\n 2 6,7 DICE_MONKEY,DICE_MONKEY\n 1".getBytes());
+        Player player = new Player(" ");
+        int score = player.playTurn(dieRoll, card, new Scanner(in));
+        Assert.assertEquals(4600, score);
+    }
+
+    @Test
     public void scoreTest69() {
         // score a set of 2 diamonds over 2 rolls with FC is diamond (SC 400)
         GameMode.mode = GameMode.JUNIT_TEST;
