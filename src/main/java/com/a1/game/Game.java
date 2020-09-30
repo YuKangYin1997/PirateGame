@@ -222,6 +222,13 @@ public class Game {
      */
     public static int getScoreOfSequence(String[] dieRoll, Card card, Set<Integer> set) {
         int score = 0;
+        // if a player has Monkey Business Card, convert monkey dice to parrot dice at first
+        if (card.getName().equals(Const.CARD_MONKEY_BUSINESS)) {
+            for (int i = 0; i < dieRoll.length; i++) {
+                if (dieRoll[i].equals(Const.DICE_MONKEY))
+                    dieRoll[i] = Const.DICE_PARROT;
+            }
+        }
 
         // calculate how many time a dice appeared
         // e.g. {"coin":2, "sword":2, "parrot":4, "skull":1}
