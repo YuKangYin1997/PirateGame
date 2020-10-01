@@ -92,7 +92,9 @@ public class Player implements Serializable {
                 if (skullNum >= 4) {
                     if (roundNo == 1) {
                         if (SeaBattleUtil.hasSeaBattleCard(card)) {
-
+                            int score = SeaBattleUtil.calSeaBattleBonus(dieRoll, card, true, new HashSet<Integer>());  // negative score
+                            System.out.println("Sorry, you die. You lose sea battle, too. You lose " + (-score) + " points in your turn.");
+                            return score;
                         } else {
                             System.out.println("Sorry, you die.");
                             int score = IslandOfSkullUtil.deductScore(dieRoll, card, sc);  // negative score
@@ -114,6 +116,13 @@ public class Player implements Serializable {
                                 System.out.println("Sorry, you die. You get " + score + " points from your treasure chest in this turn.");
                                 return score;
                             }
+                        } else if (SeaBattleUtil.hasSeaBattleCard(card)) {
+                            int score = SeaBattleUtil.calSeaBattleBonus(dieRoll, card, true, new HashSet<Integer>());  // negative score
+                            System.out.println("Sorry, you die. You lose sea battle, too. You lose " + (-score) + " points in your turn.");
+                            return score;
+                        } else {
+                            System.out.println("Sorry, you die. You earned 0 points in your turn.");
+                            return 0;
                         }
                     }
                 } else if (skullNum == 3) {
@@ -128,7 +137,9 @@ public class Player implements Serializable {
                                 return score;
                             }
                         } else if (SeaBattleUtil.hasSeaBattleCard(card)) {
-
+                            int score = SeaBattleUtil.calSeaBattleBonus(dieRoll, card, true, new HashSet<Integer>());  // negative score
+                            System.out.println("Sorry, you die. You lose sea battle, too. You lose " + (-score) + " points in your turn.");
+                            return score;
                         } else {
                             System.out.println("Sorry, you die. You earned 0 points in your turn.");
                             return 0;

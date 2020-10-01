@@ -3,6 +3,7 @@ package com.a1.game;
 import com.a1.util.Card;
 import com.a1.util.Const;
 import com.a1.util.DiceUtil;
+import com.a1.util.SeaBattleUtil;
 
 import java.util.*;
 
@@ -184,10 +185,13 @@ public class Game {
         int scoreOfSequence = getScoreOfSequence(dieRoll, card, set);
         System.out.println("scoreOfSequence: " + scoreOfSequence);
 
+        int bonusFromSeaBattle = SeaBattleUtil.calSeaBattleBonus(dieRoll, card, false, set);
+        System.out.println("bonusFromSeaBattle: " + bonusFromSeaBattle);
+
         int fullChestBonus = getFullChestBonus(set);
         System.out.println("fullChestBonus:" + fullChestBonus);
 
-        int sum = faceValueOfDieRoll + faceValueOfCard + scoreOfSequence + fullChestBonus;
+        int sum = faceValueOfDieRoll + faceValueOfCard + scoreOfSequence + bonusFromSeaBattle + fullChestBonus;
         if (card.getName().equals(Const.CARD_CAPTAIN)) {
             sum *= 2;
         }
