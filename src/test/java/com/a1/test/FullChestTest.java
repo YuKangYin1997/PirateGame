@@ -52,6 +52,21 @@ public class FullChestTest {
     }
 
     @Test
+    public void fullChestTest106() {
+        // FC: 2 sword sea battle, first  roll:  4 monkeys, 1 sword, 2 parrots and a coin
+        // then reroll 2 parrots and get coin and 2nd sword
+        // score is: 200 (coins) + 200 (monkeys) + 300 (swords of battle) + 500 (full chest) = 1200
+        GameMode.mode = GameMode.JUNIT_TEST;
+        String[] dieRoll = {Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_MONKEY,
+                Const.DICE_SWORD, Const.DICE_PARROT, Const.DICE_PARROT, Const.DICE_COIN};
+        Card card = new Card(Const.CARD_2_SABRE_SEA_BATTLE);
+        Player player = new Player(" ");
+        InputStream in = new ByteArrayInputStream("2 5,6 DICE_COIN,DICE_SWORD\n 1".getBytes());
+        int score = player.playTurn(dieRoll, card, new Scanner(in));
+        Assert.assertEquals(1200, score);
+    }
+
+    @Test
     public void fullChestTest107() {
         // FC: monkey business and RTS: 2 monkeys, 1 parrot, 2 coins, 3 diamonds   SC 1200 (bonus)
         GameMode.mode = GameMode.JUNIT_TEST;
