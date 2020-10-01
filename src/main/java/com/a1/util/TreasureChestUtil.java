@@ -1,6 +1,7 @@
 package com.a1.util;
 
 import com.a1.game.Game;
+import com.a1.game.GameMode;
 
 import java.util.List;
 import java.util.Scanner;
@@ -100,6 +101,10 @@ public class TreasureChestUtil {
             System.out.println("(2) retrieve");
             System.out.println("(3) exit chest");
             action = sc.nextInt();
+            // Print Action for JUnit Test
+            if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                System.out.println(action);
+            }
 
             if (isPutAllowed(dieRoll, card) && action == 1) {  // put
                 boolean putIndexValid = false;
@@ -107,6 +112,18 @@ public class TreasureChestUtil {
                 while (!putIndexValid) {
                     System.out.println("Select the die to put(0,1,2...) ");
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
+
+                    // Print input str for JUnit Test
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        for (int i = 0; i < str.length; i++) {
+                            System.out.print(str[i]);
+                            if (i < str.length - 1) {
+                                System.out.print(" ");
+                            }
+                        }
+                        System.out.println();
+                    }
+
                     dieIndexes = Game.convertStringArrayToInt(str);
                     putIndexValid = isPutIndexValid(dieRoll, card, dieIndexes);
                     if (!putIndexValid) {
@@ -120,6 +137,18 @@ public class TreasureChestUtil {
                 while (!retrieveIndexValid) {
                     System.out.println("Select the die to retrieve(0,1,2...) ");
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
+
+                    // Print input str for JUnit Test
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        for (int i = 0; i < str.length; i++) {
+                            System.out.print(str[i]);
+                            if (i < str.length - 1) {
+                                System.out.print(" ");
+                            }
+                        }
+                        System.out.println();
+                    }
+
                     dieIndexes = Game.convertStringArrayToInt(str);
                     retrieveIndexValid = isRetrieveIndexValid(dieRoll, card, dieIndexes);
                     if (!retrieveIndexValid) {

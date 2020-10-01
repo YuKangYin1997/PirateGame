@@ -91,6 +91,12 @@ public class IslandOfSkullUtil {
                 System.out.println("(1) Choose dice number to roll again");
                 System.out.println("(2) Deduct others' score");
                 act = sc.nextInt();
+
+                // Print act Number in JUnit Test
+                if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    System.out.println(act);
+                }
+
                 if (act == 1 || act == 2) {
                     actionNumValid = true;
                 } else {
@@ -104,6 +110,17 @@ public class IslandOfSkullUtil {
                 while (!reRollIndexValid) {
                     System.out.println("Select the die to re-roll(0,1,2...) ");
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
+
+                    // REFACTOR
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        for (int i = 0; i < str.length; i++) {
+                            System.out.print(str[i]);
+                            if (i < str.length - 1)
+                                System.out.print(" ");
+                        }
+                        System.out.println();
+                    }
+
                     reRollIndexes = Game.convertStringArrayToInt(str);
                     reRollIndexValid = IslandOfSkullUtil.isReRollIndexValid(dieRoll, reRollIndexes);
                     if (!reRollIndexValid) {
@@ -111,15 +128,17 @@ public class IslandOfSkullUtil {
                     }
                 }
 
+                Game.reRollDice(dieRoll, reRollIndexes);
+                System.out.println("After Real Re-Roll:");
+                Game.printDieRoll(dieRoll);
+                // Rigging the game
                 if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
                     String targetStr = sc.nextLine();
                     String[] targets = targetStr.trim().split(",");
                     Game.riggedReRollDice(dieRoll, reRollIndexes, targets);
-                } else if (GameMode.mode.equals(GameMode.REAL_GAME)) {
-                    Game.reRollDice(dieRoll, reRollIndexes); // re-roll after re-roll indexes are valid
+                    System.out.println("After Rigging Re-Roll:");
+                    Game.printDieRoll(dieRoll);
                 }
-                System.out.print("After Re-Roll: ");
-                Game.printDieRoll(dieRoll);
 
                 // after player's re-roll checks if s/he is able to re-roll
                 reRollAllowed = IslandOfSkullUtil.isReRollAllowed(reRollIndexes, dieRoll);

@@ -36,6 +36,16 @@ public class SorceressUtil {
             System.out.println("Select the die to re-roll(0,1,2...) ");
             String[] strs = (sc.next()).replaceAll("\\s", "").split(",");
 
+            // Print strs for JUnit Test
+            if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                for (int i = 0; i < strs.length; i++) {
+                    System.out.print(strs[i]);
+                    if (i < strs.length - 1)
+                        System.out.print(" ");
+                }
+                System.out.println();
+            }
+
             reRollIndexes = Game.convertStringArrayToInt(strs);
             valid = SorceressUtil.isReRollIndexValid(dieRoll, reRollIndexes);
             if (!valid) {
@@ -43,15 +53,16 @@ public class SorceressUtil {
             }
         }
 
-        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {  // only for JUnit test
+        Game.reRollDice(dieRoll, reRollIndexes);
+        System.out.println("After Real Re-Roll:");
+        Game.printDieRoll(dieRoll);
+        // Rigging the game
+        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
             String targetStr = sc.nextLine();
             String[] targets = targetStr.trim().split(",");
             Game.riggedReRollDice(dieRoll, reRollIndexes, targets);
-            System.out.println("****** After Re-Roll ******");
+            System.out.println("After Rigging Re-Roll:");
             Game.printDieRoll(dieRoll);
-            System.out.println("***************************");
-        } else if (GameMode.mode.equals(GameMode.REAL_GAME)) {
-            Game.reRollDice(dieRoll, reRollIndexes);
         }
         card.setUsed(true);
     }

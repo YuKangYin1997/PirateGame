@@ -162,8 +162,11 @@ public class Player implements Serializable {
                         System.out.println("(1) yes");
                         System.out.println("(2) no");
                         int act = sc.nextInt();
+                        // Print act number in JUnit Test
+                        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                            System.out.println(act);
+                        }
                         if (act == 1) {
-                            System.out.println("***");
                             SorceressUtil.usingSorceressCard(dieRoll, card, sc);
                             continue; // jump to next round
                         }
@@ -174,6 +177,10 @@ public class Player implements Serializable {
                     System.out.println("(1) yes");
                     System.out.println("(2) no");
                     int act = sc.nextInt();
+                    // Print act Number in Junit Test
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        System.out.println(act);
+                    }
                     if (act == 1) {
                         TreasureChestUtil.usingTreasureChest(dieRoll, card, sc);
                     }
@@ -187,6 +194,11 @@ public class Player implements Serializable {
                 }
 
                 int act = sc.nextInt();
+                // Print act Number in JUnit Test
+                if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    System.out.println(act);
+                }
+
                 if (act == 1) {  // roll to score
                     int score = Game.rollToScore(dieRoll, card);
                     System.out.println("Finish your turn, you earned " + score + " points.");
@@ -197,6 +209,18 @@ public class Player implements Serializable {
                     while (!valid) {
                         System.out.println("Select the die to re-roll(0,1,2...) ");
                         String[] strs = (sc.next()).replaceAll("\\s", "").split(",");
+
+                        // Print input strs for JUnit Test
+                        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                            for (int i = 0; i < strs.length; i++) {
+                                System.out.print(strs[i]);
+                                if (i < strs.length - 1) {
+                                    System.out.print(" ");
+                                }
+                            }
+                            System.out.println();
+                        }
+
                         reRollIndexes = Game.convertStringArrayToInt(strs);
                         valid = Game.isReRollIndexValid(dieRoll, reRollIndexes, card);
                         if (!valid) {
@@ -204,15 +228,16 @@ public class Player implements Serializable {
                         }
                     }
 
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {  // only for JUnit test
+                    Game.reRollDice(dieRoll, reRollIndexes);
+                    System.out.println("After Real Re-Roll:");
+                    Game.printDieRoll(dieRoll);
+                    // Rigging the game
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
                         String targetStr = sc.nextLine();
                         String[] targets = targetStr.trim().split(",");
                         Game.riggedReRollDice(dieRoll, reRollIndexes, targets);
-                        System.out.println("****** After Re-Roll ******");
+                        System.out.println("After Rigging Re-Roll:");
                         Game.printDieRoll(dieRoll);
-                        System.out.println("***************************");
-                    } else if (GameMode.mode.equals(GameMode.REAL_GAME)) {
-                        Game.reRollDice(dieRoll, reRollIndexes);
                     }
                 }
             }
