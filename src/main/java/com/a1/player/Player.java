@@ -4,6 +4,7 @@ import com.a1.game.Game;
 import com.a1.game.GameMode;
 import com.a1.util.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -15,6 +16,7 @@ public class Player implements Serializable {
     private int playerId;
     private String name;
     private int score;
+    private static PlayerConnection playerConnection;
     private Player[] players;
 
     public Player(String name) {
@@ -26,6 +28,19 @@ public class Player implements Serializable {
     public void initializeGamePlayers() {
         for (int i = 0; i < 3; i++) {
             players[i] = new Player(" ");
+        }
+    }
+
+    public void connectToClient() {
+        playerConnection = new PlayerConnection();
+        try {
+            playerId = playerConnection.getdIn().readInt();
+            System.out.println("Connected as " + playerId);
+
+            // send this player to server
+            playerConnection.getdOut().writeObject(this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -59,6 +74,105 @@ public class Player implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void startGame() {
+        players = playerConnection.receivePlayers();
+
+        while (true) {
+            int turnNo = playerConnection.receiveTurnNo();
+            if (turnNo == -1)
+                break;
+
+            System.out.println("\n \n \n ********Turn Number " + turnNo + "********");
+            int[] scores = playerConnection.receiverScores();
+
+            for (int i = 0; i < 3; i++) {
+                players[i].setScore(scores[i]);
+            }
+
+            printPlayerScores(players);
+
+            String[] dieRoll = Game.generate8Dice();
+            Card card = Game.drawCard();
+            if (GameMode.mode.equals(GameMode.SHORT_GAME_1)) { // rigging game for short video 1
+                if (playerId == 1) {
+                    dieRoll = Game.generate2Sword2Monkey1Parrot3Skull();
+                    card = new Card(Const.CARD_COIN);
+                } else if (playerId == 2) {
+                    dieRoll = Game.generate3Monkey2Sword2Parrot1Skull();
+                    card = new Card(Const.CARD_COIN);
+                } else if (playerId == 3) {
+                    dieRoll = Game.generate8Sword();
+                    card = new Card(Const.CARD_CAPTAIN);
+                }
+            } else if (GameMode.mode.equals(GameMode.SHORT_GAME_2)) { // rigging game for short video 2
+                if (playerId == 1) {
+                    dieRoll = Game.generate3Monkey2Sword2Parrot1Skull();
+                    card = new Card(Const.CARD_COIN);
+                } else if (playerId == 2) {
+                    dieRoll = Game.generate7Coin1Skull();
+                    card = new Card(Const.CARD_COIN);
+                } else if (playerId == 3) {
+                    dieRoll = Game.generate4Monkey2Sword2Parrot();
+                    card = new Card(Const.CARD_COIN);
+                }
+            }
+            Scanner sc = new Scanner(System.in);
+            int earnedScore = playTurn(dieRoll, card, sc);
+
+            System.out.println("\n");
+            boolean islandOfSkull = false;
+            if (Game.getSkullNum(dieRoll, card) >= 4 && !SeaBattleUtil.hasSeaBattleCard(card) && earnedScore < 0) { // island of skull
+                islandOfSkull = true;
+                System.out.println("Turn is End. You deduct " + (-earnedScore) + " points of other opponents in Island of Skull.");
+            } else {
+                System.out.println("Turn is End. You earn " + earnedScore + " points.");
+            }
+            System.out.println("\n");
+            playerConnection.sendIslandOfSkull(islandOfSkull);
+            playerConnection.sendScore(earnedScore);
+        }
+    }
+
+    /**
+     * print all 3 players' scores
+     */
+    public void printPlayerScores(Player[] players) {
+        if (playerId == 1) {
+            Game.printScore(players[0]);
+            Game.printScore(players[1]);
+            Game.printScore(players[2]);
+        } else if (playerId == 2) {
+            Game.printScore(players[1]);
+            Game.printScore(players[0]);
+            Game.printScore(players[2]);
+        } else {
+            Game.printScore(players[2]);
+            Game.printScore(players[0]);
+            Game.printScore(players[1]);
+        }
+    }
+
+    public void returnWinner() {
+        try {
+            int[] scores = playerConnection.receiverScores();
+            for (int i = 0; i < 3; ++i) {
+                players[i].setScore(scores[i]);
+            }
+            printPlayerScores(players);
+            Player winner = (Player) playerConnection.getdIn().readObject();
+            if (playerId == winner.getPlayerId()) {
+                System.out.println("You win!");
+            } else {
+                System.out.println("The winner is " + winner.getName());
+            }
+            System.out.println("Game over!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -250,5 +364,19 @@ public class Player implements Serializable {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+//        GameMode.mode = GameMode.SHORT_GAME_1;
+//        GameMode.mode = GameMode.SHORT_GAME_2;
+        Scanner sc = new Scanner(System.in);
+        System.out.print("What is your name ? ");
+        String name = sc.next();
+        Player player = new Player(name);
+        player.initializeGamePlayers();
+        player.connectToClient();
+        player.startGame();
+        player.returnWinner();
+        sc.close();
     }
 }

@@ -1,10 +1,7 @@
 package com.a1.game;
 
 import com.a1.player.Player;
-import com.a1.util.Card;
-import com.a1.util.Const;
-import com.a1.util.DiceUtil;
-import com.a1.util.SeaBattleUtil;
+import com.a1.util.*;
 
 import java.util.*;
 
@@ -391,6 +388,21 @@ public class Game {
     public static String[] generate7Coin1Skull() {
         return new String[]{Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN,
                 Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_SKULL};
+    }
+
+    public static String[] generate8Dice() {
+        String[] dice = new String[8];
+        for (int i = 0; i < 8; i++) {
+            int rand = (int) (Math.random() * DiceUtil.diceTypeNumber + 1);
+            String diceName = DiceUtil.diceMap.get(rand);
+            dice[i] = diceName;
+        }
+        return dice;
+    }
+
+    public static Card drawCard() {
+        int rand = (int) (Math.random() * CardUtil.cardTypeNumber + 1);
+        return CardUtil.drawCard(rand);
     }
 
 
