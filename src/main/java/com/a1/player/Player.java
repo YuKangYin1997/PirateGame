@@ -23,6 +23,36 @@ public class Player implements Serializable {
         players = new Player[3];
     }
 
+    public void initializeGamePlayers() {
+        for (int i = 0; i < 3; i++) {
+            players[i] = new Player(" ");
+        }
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
     /**
      * check if a player is dead with his/her dieRoll and card
      * @return if a player is dead, return true; otherwise, return false
@@ -61,7 +91,19 @@ public class Player implements Serializable {
             if (dead) {  // player is dead
                 if (skullNum >= 4) {
                     if (roundNo == 1) {
+                        if (SeaBattleUtil.hasSeaBattleCard(card)) {
 
+                        } else {
+                            System.out.println("Sorry, you die.");
+                            int score = IslandOfSkullUtil.deductScore(dieRoll, card, sc);  // negative score
+                            for (int i = 0; i < players.length; i++) {  // deduct other players' score
+                                if (playerId != i) {
+                                    players[i].setScore(Game.calScore(players[i].getScore(), score));
+                                }
+                            }
+                            System.out.println("In the island of skull, you deduct " + (-score) + " points of your opponents.");
+                            return score;
+                        }
                     } else {
                         if (card.getName().equals(Const.CARD_TREASURE_CHEST)) {
                             if (card.getTreasureChest().size() == 0) {
