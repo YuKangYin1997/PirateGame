@@ -53,6 +53,14 @@ public class Player implements Serializable {
         this.players = players;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * check if a player is dead with his/her dieRoll and card
      * @return if a player is dead, return true; otherwise, return false

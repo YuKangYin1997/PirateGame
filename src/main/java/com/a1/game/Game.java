@@ -1,5 +1,6 @@
 package com.a1.game;
 
+import com.a1.player.Player;
 import com.a1.util.Card;
 import com.a1.util.Const;
 import com.a1.util.DiceUtil;
@@ -58,6 +59,15 @@ public class Game {
         System.out.print("Current Card : ");
         System.out.print("[");
         System.out.println(card.getName().substring(card.getName().indexOf("_") + 1) + "]");
+    }
+
+    public static void printScore(Player player) {
+        System.out.println(
+                "|---------------------------------------------------------------------------------------------------------------------------------------|");
+        System.out.println("| Scores for player : " + player.getName());
+        System.out.println("| Total Score : " + player.getScore());
+        System.out.println(
+                "|---------------------------------------------------------------------------------------------------------------------------------------|");
     }
 
     /**
@@ -318,4 +328,70 @@ public class Game {
         else
             return oldScore;
     }
+
+    public static Player getWinner(Player[] players) {
+        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+            printScore(players[0]);
+            printScore(players[1]);
+            printScore(players[2]);
+        }
+        Player temp = players[1];
+        if (players[0].getScore() >= players[1].getScore())
+            temp = players[0];
+        if (players[2].getScore() >= temp.getScore())
+            return players[2];
+        return temp;
+    }
+
+    public static boolean isEnded(Player[] players) {
+        for (Player player : players) {
+            if (player.getScore() > 6000) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * [only for short video]
+     */
+    public static String[] generate2Sword2Monkey1Parrot3Skull() {
+        return new String[]{Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_MONKEY,
+                Const.DICE_MONKEY, Const.DICE_PARROT, Const.DICE_SKULL, Const.DICE_SKULL, Const.DICE_SKULL};
+    }
+
+    /**
+     * [only for short video]
+     */
+    public static String[] generate3Monkey2Sword2Parrot1Skull() {
+        return new String[]{Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_MONKEY,
+                Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_PARROT, Const.DICE_PARROT, Const.DICE_SKULL};
+    }
+
+    /**
+     * [only for short video]
+     */
+    public static String[] generate4Monkey2Sword2Parrot() {
+        return new String[]{Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_MONKEY, Const.DICE_MONKEY,
+                Const.DICE_SWORD, Const.DICE_SWORD, Const.DICE_PARROT, Const.DICE_PARROT};
+    }
+
+    /**
+     * [only for short video]
+     */
+    public static String[] generate8Sword() {
+        String[] dice = new String[8];
+        Arrays.fill(dice, Const.DICE_SWORD);
+        return dice;
+    }
+
+    /**
+     * [only for short video]
+     */
+    public static String[] generate7Coin1Skull() {
+        return new String[]{Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN,
+                Const.DICE_COIN, Const.DICE_COIN, Const.DICE_COIN, Const.DICE_SKULL};
+    }
+
+
 }
