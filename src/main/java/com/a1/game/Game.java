@@ -342,7 +342,7 @@ public class Game {
 
     public static boolean isEnded(Player[] players) {
         for (Player player : players) {
-            if (player.getScore() > 6000) {
+            if (player.getScore() >= 6000) {
                 return true;
             }
         }

@@ -21,21 +21,30 @@ public class PlayerConnection {
         }
     }
 
+    public Player receivePlayer() {
+        try {
+            int playerId = dIn.readInt();
+            String name = dIn.readUTF();
+            int score = dIn.readInt();
+            return new Player(playerId, name, score);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Player[] receivePlayers() {
         Player[] players = new Player[3];
         try {
-            Player p = (Player) dIn.readObject();
-            players[0] = p;
-            p = (Player) dIn.readObject();
-            players[1] = p;
-            p = (Player) dIn.readObject();
-            players[2] = p;
+            for (int i = 0; i < players.length; ++i) {
+                int playerId = dIn.readInt();
+                String name = dIn.readUTF();
+                int score = dIn.readInt();
+                players[i] = new Player(playerId, name, score);
+            }
             return players;
-        } catch (IOException e) {
-            System.out.println("Score not received");
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.out.println("class not found");
+        } catch (Exception e) {
+            System.out.println("receive players fail!");
             e.printStackTrace();
         }
         return players;
@@ -90,6 +99,18 @@ public class PlayerConnection {
             dOut.flush();
         } catch (IOException e) {
             System.out.println("score island of skull failed.");
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPlayer(Player player) {
+        try {
+            dOut.writeInt(player.getPlayerId());
+            dOut.writeUTF(player.getName());
+            dOut.writeInt(player.getScore());
+            dOut.flush();
+        } catch (IOException e) {
+            System.out.println("send player to server fail!");
             e.printStackTrace();
         }
     }

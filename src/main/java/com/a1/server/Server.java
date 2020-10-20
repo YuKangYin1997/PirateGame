@@ -49,7 +49,7 @@ public class Server {
                 serverThread.getdOut().flush();
 
                 // get player instance(name and scoreSheet) from player(client)
-                Player player = (Player) serverThread.getdIn().readObject();
+                Player player = serverThread.receivePlayer();
                 System.out.println("Game Player " + player.getPlayerId() + " ~ " + player.getName() + " ~ has joined");
 
                 // store gamePlayer to gamePlayer array
@@ -133,11 +133,11 @@ public class Server {
             // get winner
             Player winner = Game.getWinner(players);
             System.out.println("The winner is " + winner.getName());
-            for (int i = 0; i < serverThreads.length; i++) {
-                serverThreads[i].getdOut().writeObject(winner);
-                serverThreads[i].getdOut().flush();
+            for (ServerThread serverThread : serverThreads) {
+                serverThread.sendPlayer(winner);
             }
-        } catch (IOException e) {
+            serverSocket.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

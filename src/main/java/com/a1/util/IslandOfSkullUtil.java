@@ -93,7 +93,7 @@ public class IslandOfSkullUtil {
                 act = sc.nextInt();
 
                 // Print act Number in JUnit Test
-                if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                     System.out.println(act);
                 }
 
@@ -112,7 +112,7 @@ public class IslandOfSkullUtil {
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
 
                     // REFACTOR
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                         for (int i = 0; i < str.length; i++) {
                             System.out.print(str[i]);
                             if (i < str.length - 1)
@@ -132,7 +132,7 @@ public class IslandOfSkullUtil {
                 System.out.println("After Real Re-Roll:");
                 Game.printDieRoll(dieRoll);
                 // Rigging the game
-                if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                     String targetStr = sc.nextLine();
                     String[] targets = targetStr.trim().split(",");
                     Game.riggedReRollDice(dieRoll, reRollIndexes, targets);

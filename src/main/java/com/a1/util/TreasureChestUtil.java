@@ -102,7 +102,7 @@ public class TreasureChestUtil {
             System.out.println("(3) exit chest");
             action = sc.nextInt();
             // Print Action for JUnit Test
-            if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+            if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                 System.out.println(action);
             }
 
@@ -114,7 +114,7 @@ public class TreasureChestUtil {
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
 
                     // Print input str for JUnit Test
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                         for (int i = 0; i < str.length; i++) {
                             System.out.print(str[i]);
                             if (i < str.length - 1) {
@@ -139,7 +139,7 @@ public class TreasureChestUtil {
                     String[] str = (sc.next()).replaceAll("\\s", "").split(",");
 
                     // Print input str for JUnit Test
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                         for (int i = 0; i < str.length; i++) {
                             System.out.print(str[i]);
                             if (i < str.length - 1) {

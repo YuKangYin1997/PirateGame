@@ -37,7 +37,7 @@ public class SorceressUtil {
             String[] strs = (sc.next()).replaceAll("\\s", "").split(",");
 
             // Print strs for JUnit Test
-            if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+            if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                 for (int i = 0; i < strs.length; i++) {
                     System.out.print(strs[i]);
                     if (i < strs.length - 1)
@@ -57,7 +57,7 @@ public class SorceressUtil {
         System.out.println("After Real Re-Roll:");
         Game.printDieRoll(dieRoll);
         // Rigging the game
-        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+        if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
             String targetStr = sc.nextLine();
             String[] targets = targetStr.trim().split(",");
             Game.riggedReRollDice(dieRoll, reRollIndexes, targets);

@@ -5,24 +5,27 @@ import com.a1.game.GameMode;
 import com.a1.util.*;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Scanner;
 
-public class Player implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Player {
 
     private int playerId;
     private String name;
     private int score;
-    private static PlayerConnection playerConnection;
+    private PlayerConnection playerConnection;
     private Player[] players;
 
     public Player(String name) {
         this.name = name;
         score = 0;
         players = new Player[3];
+    }
+
+    public Player(int playerId, String name, int score) {
+        this.playerId = playerId;
+        this.name = name;
+        this.score = score;
     }
 
     public void initializeGamePlayers() {
@@ -38,7 +41,7 @@ public class Player implements Serializable {
             System.out.println("Connected as " + playerId);
 
             // send this player to server
-            playerConnection.getdOut().writeObject(this);
+            playerConnection.sendPlayer(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,24 +158,18 @@ public class Player implements Serializable {
     }
 
     public void returnWinner() {
-        try {
-            int[] scores = playerConnection.receiverScores();
-            for (int i = 0; i < 3; ++i) {
-                players[i].setScore(scores[i]);
-            }
-            printPlayerScores(players);
-            Player winner = (Player) playerConnection.getdIn().readObject();
-            if (playerId == winner.getPlayerId()) {
-                System.out.println("You win!");
-            } else {
-                System.out.println("The winner is " + winner.getName());
-            }
-            System.out.println("Game over!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        int[] scores = playerConnection.receiverScores();
+        for (int i = 0; i < 3; ++i) {
+            players[i].setScore(scores[i]);
         }
+        printPlayerScores(players);
+        Player winner = playerConnection.receivePlayer();
+        if (playerId == winner.getPlayerId()) {
+            System.out.println("You win!");
+        } else {
+            System.out.println("The winner is " + winner.getName());
+        }
+        System.out.println("Game over!");
     }
 
     /**
@@ -284,8 +281,8 @@ public class Player implements Serializable {
                         System.out.println("(1) yes");
                         System.out.println("(2) no");
                         int act = sc.nextInt();
-                        // Print act number in JUnit Test
-                        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        // Print act number in JUnit Test and Cucumber Test
+                        if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                             System.out.println(act);
                         }
                         if (act == 1) {
@@ -299,8 +296,8 @@ public class Player implements Serializable {
                     System.out.println("(1) yes");
                     System.out.println("(2) no");
                     int act = sc.nextInt();
-                    // Print act Number in Junit Test
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    // Print act Number in Junit Test and Cucumber Test
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                         System.out.println(act);
                     }
                     if (act == 1) {
@@ -316,8 +313,8 @@ public class Player implements Serializable {
                 }
 
                 int act = sc.nextInt();
-                // Print act Number in JUnit Test
-                if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                // Print act Number in JUnit Test and Cucumber Test
+                if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                     System.out.println(act);
                 }
 
@@ -332,8 +329,8 @@ public class Player implements Serializable {
                         System.out.println("Select the die to re-roll(0,1,2...) ");
                         String[] strs = (sc.next()).replaceAll("\\s", "").split(",");
 
-                        // Print input strs for JUnit Test
-                        if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                        // Print input strs for JUnit Test and Cucumber Test
+                        if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                             for (int i = 0; i < strs.length; i++) {
                                 System.out.print(strs[i]);
                                 if (i < strs.length - 1) {
@@ -354,7 +351,7 @@ public class Player implements Serializable {
                     System.out.println("After Real Re-Roll:");
                     Game.printDieRoll(dieRoll);
                     // Rigging the game
-                    if (GameMode.mode.equals(GameMode.JUNIT_TEST)) {
+                    if (GameMode.mode.equals(GameMode.JUNIT_TEST) || GameMode.mode.equals(GameMode.CUCUMBER_TEST)) {
                         String targetStr = sc.nextLine();
                         String[] targets = targetStr.trim().split(",");
                         Game.riggedReRollDice(dieRoll, reRollIndexes, targets);

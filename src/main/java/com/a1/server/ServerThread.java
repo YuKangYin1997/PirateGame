@@ -25,14 +25,28 @@ public class ServerThread implements Runnable{
         }
     }
 
+    public void sendPlayer(Player player) {
+        try {
+            dOut.writeInt(player.getPlayerId());
+            dOut.writeUTF(player.getName());
+            dOut.writeInt(player.getScore());
+            dOut.flush();
+        } catch (IOException e) {
+            System.out.println("send player fail!");
+            e.printStackTrace();
+        }
+    }
+
     public void sendPlayers(Player[] players) {
         try {
             for (Player player : players) {
-                dOut.writeObject(player);
+                dOut.writeInt(player.getPlayerId());
+                dOut.writeUTF(player.getName());
+                dOut.writeInt(player.getScore());
                 dOut.flush();
             }
-        } catch (IOException ex) {
-            System.out.println("Score not sent");
+        } catch (Exception ex) {
+            System.out.println("send players fail!");
             ex.printStackTrace();
         }
     }
@@ -100,6 +114,18 @@ public class ServerThread implements Runnable{
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Player receivePlayer() {
+        try {
+            int playerId = dIn.readInt();
+            String name = dIn.readUTF();
+            int score = dIn.readInt();
+            return new Player(playerId, name, score);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
