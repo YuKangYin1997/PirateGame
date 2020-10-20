@@ -136,8 +136,19 @@ public class Server {
             for (ServerThread serverThread : serverThreads) {
                 serverThread.sendPlayer(winner);
             }
-            serverSocket.close();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        for (ServerThread serverThread : serverThreads) {
+            serverThread.stop();
+        }
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            System.out.println("server socket close fail");
             e.printStackTrace();
         }
     }
@@ -146,6 +157,7 @@ public class Server {
         Server server = new Server();
         server.acceptConnections();
         server.gameLoop();
+        server.stop();
     }
 }
 

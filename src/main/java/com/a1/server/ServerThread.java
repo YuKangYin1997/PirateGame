@@ -13,10 +13,12 @@ public class ServerThread implements Runnable{
     private int playerId;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
+    private volatile boolean exit;
 
     public ServerThread(Socket socket, int playerId) {
         this.socket = socket;
         this.playerId = playerId;
+        this.exit = false;
         try {
             this.dOut = new ObjectOutputStream(socket.getOutputStream());
             this.dIn = new ObjectInputStream(socket.getInputStream());
@@ -64,14 +66,16 @@ public class ServerThread implements Runnable{
      */
     public void run() {
         try {
-            while (true) {
+            while (!exit) {
             }
         } catch (Exception ex) {
-            {
-                System.out.println("com.a1.util.Game Server Thread Run failed");
-                ex.printStackTrace();
-            }
+            System.out.println("Game Server Thread Run failed");
+            ex.printStackTrace();
         }
+    }
+
+    public void stop() {
+        this.exit = true;
     }
 
     public void sendTurnNo(int turnNumber) {
