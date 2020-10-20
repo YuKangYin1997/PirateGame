@@ -215,7 +215,6 @@ public class Player {
                             System.out.println("Sorry, you die. You lose sea battle, too. You lose " + (-score) + " points in your turn.");
                             return score;
                         } else {
-                            System.out.println("Sorry, you die.");
                             int score = IslandOfSkullUtil.deductScore(dieRoll, card, sc);  // negative score
                             for (int i = 0; i < players.length; i++) {  // deduct other players' score
                                 if (playerId != i) {

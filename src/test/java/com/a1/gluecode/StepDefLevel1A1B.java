@@ -157,4 +157,37 @@ public class StepDefLevel1A1B extends TestCase {
     public void player_press_button_to_not_use_treasure_chest(Integer button) {
         inputString += button.toString() + " ";
     }
+
+    @When("player press button {int} to deduct other players' score immediately")
+    public void player_press_button_to_deduct_other_players_score_immediately(Integer button) {
+        inputString += button.toString() + " ";
+    }
+
+    @Then("other players get {int} points")
+    public void other_players_get_points(int expectedScore) {
+        GameMode.mode = GameMode.CUCUMBER_TEST;
+        InputStream in = new ByteArrayInputStream(inputString.getBytes());
+        player.initializeGamePlayers();
+        player.setPlayerId(0);
+        earnedScore = player.playTurn(dieRoll, card, new Scanner(in));
+        assertEquals(expectedScore, earnedScore);
+    }
+
+    @When("player press button {int} to re-roll in Skulls Island")
+    public void player_press_button_to_re_roll_in_Skulls_Island(Integer button) {
+        inputString += button.toString() + " ";
+    }
+
+    @Then("other players' scores are not negative")
+    public void other_players_scores_are_not_negative() {
+        Player[] players = player.getPlayers();
+        assertFalse(players[1].getScore() < 0);
+        assertFalse(players[2].getScore() < 0);
+    }
+
+    @Then("player's score is not negative")
+    public void player_s_score_is_not_negative() {
+        assertFalse(player.getScore() < 0);
+    }
+
 }
