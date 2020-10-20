@@ -1,13 +1,20 @@
-Feature: Dying Test in Level 1a
+Feature: Dying Test
 
   @DieInFirstRoll
-  Scenario: die in first roll
-            die with 3 skulls on first roll  -> interface reports death & end of turn (row 38)
-    Given a dieRoll "DICE_SKULL,DICE_SKULL,DICE_SKULL,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN"
-    And a fortune card "CARD_COIN"
+  Scenario Outline: die in first roll
+  die with 3 skulls on first roll  -> interface reports death & end of turn      (row 38)
+  die by rolling one skull and having a FC with two skulls                       (row 100)
+  die by rolling 2 skulls and having a FC with 1 skull                           (row 101)
+    Given a dieRoll <dieRoll>
+    And a fortune card <fortuneCard>
     When player start a turn with given dieRoll and fortune card
     Then player will die
     And player ends his or her turn
+    Examples:
+      | dieRoll                                                                              | fortuneCard    |
+      | "DICE_SKULL,DICE_SKULL,DICE_SKULL,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN" | "CARD_COIN"    |
+      | "DICE_SKULL,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN"   | "CARD_2_SKULL" |
+      | "DICE_SKULL,DICE_SKULL,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN,DICE_COIN"  | "CARD_1_SKULL" |
 
   @DieInThirdRoll
   Scenario Outline: die in second roll
