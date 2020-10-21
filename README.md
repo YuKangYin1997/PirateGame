@@ -15,3 +15,5 @@
 - JUnit Version: 4.13
 
 - Cucumber Version: 6.1.1
+
+- Cucumber-Junit Version: 6.1.1

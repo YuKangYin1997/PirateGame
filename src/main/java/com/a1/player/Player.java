@@ -34,7 +34,7 @@ public class Player {
         }
     }
 
-    public void connectToClient() {
+    public void connectToServer() {
         playerConnection = new PlayerConnection();
         try {
             playerId = playerConnection.getdIn().readInt();
@@ -77,6 +77,10 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public PlayerConnection getPlayerConnection() {
+        return playerConnection;
     }
 
     public void startGame() {
@@ -370,7 +374,7 @@ public class Player {
         String name = sc.next();
         Player player = new Player(name);
         player.initializeGamePlayers();
-        player.connectToClient();
+        player.connectToServer();
         player.startGame();
         player.returnWinner();
         sc.close();
